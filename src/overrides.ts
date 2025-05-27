@@ -43,7 +43,13 @@ import { WeatherType } from "#enums/weather-type";
  * }
  * ```
  */
-const overrides = {} satisfies Partial<InstanceType<OverridesType>>;
+const overrides = {
+  STARTING_WAVE_OVERRIDE: 150,
+
+	MYSTERY_ENCOUNTER_RATE_OVERRIDE: 255,
+
+	MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType.RATTATTACK,
+} satisfies Partial<InstanceType<OverridesType>>;
 
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}
@@ -131,7 +137,7 @@ class DefaultOverrides {
   readonly STARTER_FORM_OVERRIDES: Partial<Record<SpeciesId, number>> = {};
 
   /** default 5 or 20 for Daily */
-  readonly STARTING_LEVEL_OVERRIDE: number = 0;
+  readonly STARTING_LEVEL_OVERRIDE: number = 500;
   /**
    * SPECIES OVERRIDE
    * will only apply to the first starter in your party or each enemy pokemon
