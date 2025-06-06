@@ -3,11 +3,8 @@ import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounte
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { globalScene } from "#app/global-scene";
-import { Species } from "#enums/species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { Moves } from "#enums/moves";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
-import { Abilities } from "#enums/abilities";
 import {
   type EnemyPartyConfig,
   generateModifierType,
@@ -28,12 +25,16 @@ import {
 import { applyModifierTypeToPlayerPokemon } from "../utils/encounter-pokemon-utils";
 import { queueEncounterMessage } from "../utils/encounter-dialogue-utils";
 import { PokemonType } from "#enums/pokemon-type";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
+import { AbilityId } from "#enums/ability-id";
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounters/rattattack";
 
 /**
  * Rattattack encounter.
  * @see {@link https://github.com/pagefaultgames/pokerogue/issues/4421 | GitHub Project #4421}
+ * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 
 export const RattattackEncounter: MysteryEncounter = MysteryEncounterBuilder.withEncounterType(
@@ -45,7 +46,7 @@ export const RattattackEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
   .withFleeAllowed(true)
   .withIntroSpriteConfigs([
     {
-      spriteKey: "joey",
+      spriteKey: "youngster_m",
       fileRoot: "trainer",
       hasShadow: true,
       x: 0,
@@ -68,13 +69,14 @@ export const RattattackEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
 
     // Choose between Rattata and Raticate as a boss depending on the current wave
     const wave = globalScene.currentBattle.waveIndex;
+    //under wave 100 - Rattata
     if (wave < 100) {
       encounter.enemyPartyConfigs.push({
         pokemonConfigs: [
           {
-            species: getPokemonSpecies(Species.RATTATA),
+            species: getPokemonSpecies(SpeciesId.RATTATA),
             isBoss: true,
-            moveSet: [Moves.TACKLE, Moves.QUICK_ATTACK, Moves.BITE, Moves.FOCUS_ENERGY],
+            moveSet: [MoveId.TACKLE, MoveId.QUICK_ATTACK, MoveId.BITE, MoveId.FOCUS_ENERGY],
             modifierConfigs: [
               {
                 modifier: generateModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, [
@@ -88,20 +90,21 @@ export const RattattackEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
               },
             ],
             customPokemonData: new CustomPokemonData({
-              ability: Abilities.HUSTLE,
+              ability: AbilityId.HUSTLE,
             }),
           },
         ],
       });
-      encounter.setDialogueToken("chosenPokemon", getPokemonSpecies(Species.RATTATA).getName());
-      loadCustomMovesForEncounter([Moves.HYPER_FANG, Moves.CRUNCH, Moves.AERIAL_ACE, Moves.FOCUS_ENERGY]);
+      encounter.setDialogueToken("chosenPokemon", getPokemonSpecies(SpeciesId.RATTATA).getName());
+      loadCustomMovesForEncounter([MoveId.HYPER_FANG, MoveId.CRUNCH, MoveId.AERIAL_ACE, MoveId.FOCUS_ENERGY]);
     } else {
+      // above wave 100 - Raticate
       encounter.enemyPartyConfigs.push({
         pokemonConfigs: [
           {
-            species: getPokemonSpecies(Species.RATICATE),
+            species: getPokemonSpecies(SpeciesId.RATICATE),
             isBoss: true,
-            moveSet: [Moves.HYPER_FANG, Moves.CRUNCH, Moves.AERIAL_ACE, Moves.FOCUS_ENERGY],
+            moveSet: [MoveId.HYPER_FANG, MoveId.CRUNCH, MoveId.AERIAL_ACE, MoveId.FOCUS_ENERGY],
             modifierConfigs: [
               {
                 modifier: generateModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, [
@@ -115,13 +118,13 @@ export const RattattackEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
               },
             ],
             customPokemonData: new CustomPokemonData({
-              ability: Abilities.HUSTLE,
+              ability: AbilityId.HUSTLE,
             }),
           },
         ],
       });
-      encounter.setDialogueToken("chosenPokemon", getPokemonSpecies(Species.RATICATE).getName());
-      loadCustomMovesForEncounter([Moves.TACKLE, Moves.QUICK_ATTACK, Moves.BITE, Moves.FOCUS_ENERGY]);
+      encounter.setDialogueToken("chosenPokemon", getPokemonSpecies(SpeciesId.RATICATE).getName());
+      loadCustomMovesForEncounter([MoveId.TACKLE, MoveId.QUICK_ATTACK, MoveId.BITE, MoveId.FOCUS_ENERGY]);
     }
     return true;
   })
@@ -151,10 +154,11 @@ export const RattattackEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         // Spawn battle
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
+        // Offers player a free Scarf and normal rewards
         setEncounterRewards({ fillRemaining: true }, undefined, () => {
-          // Offers player a free
           givePlayerSilkScarf();
         });
+
         await transitionMysteryEncounterIntroVisuals();
         await initBattleWithEnemyConfig(config);
       })
@@ -180,17 +184,18 @@ export const RattattackEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
   .build();
 
 function givePlayerSilkScarf() {
-  // Give first party pokemon attack type boost item (Normal/Silk Scarf)
+  // Give first party pokemon attack type boost item (Silk Scarf)
   const leadPokemon = globalScene.getPlayerParty()?.[0];
+
   if (leadPokemon) {
-    // Force booster for NORMAL type (Silk Scarf)
+    // Defines booster as Silk Scarf - Normal Pokemon Type
     const boosterModifierType = generateModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, [
       PokemonType.NORMAL,
     ]) as AttackTypeBoosterModifierType;
 
     applyModifierTypeToPlayerPokemon(leadPokemon, boosterModifierType);
-
     const encounter = globalScene.currentBattle.mysteryEncounter!;
+
     encounter.setDialogueToken("itemName", boosterModifierType.name);
     encounter.setDialogueToken("leadPokemon", leadPokemon.getNameToRender());
     queueEncounterMessage(`${namespace}:found_item`);

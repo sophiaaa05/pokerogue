@@ -1,13 +1,10 @@
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import { Biome } from "#enums/biome";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { RattattackEncounter } from "#app/data/mystery-encounters/encounters/rattattack-encounter";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { Moves } from "#enums/moves";
 import type BattleScene from "#app/battle-scene";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -16,10 +13,13 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "../encounter-test-utils";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { AttackTypeBoosterModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { SpeciesId } from "#enums/species-id";
+import { BiomeId } from "#enums/biome-id";
+import { MoveId } from "#enums/move-id";
 const namespace = "mysteryEncounters/rattattack";
 
-const defaultParty = [Species.RATTATA, Species.RATICATE];
-const defaultBiome = Biome.PLAINS;
+const defaultParty = [SpeciesId.RATTATA, SpeciesId.RATICATE];
+const defaultBiome = BiomeId.PLAINS;
 const waveUnder100 = 56;
 // const waveAbove100 = 153;
 
@@ -40,10 +40,10 @@ describe("Rattattack - Mystery Encounter", () => {
       .startingWave(waveUnder100)
       .startingBiome(defaultBiome)
       .disableTrainerWaves()
-      .moveset([Moves.TACKLE, Moves.QUICK_ATTACK, Moves.BITE, Moves.FOCUS_ENERGY]); // Required for attack type booster item generation
+      .moveset([MoveId.TACKLE, MoveId.QUICK_ATTACK, MoveId.BITE, MoveId.FOCUS_ENERGY]); // Required for attack type booster item generation
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
-      new Map<Biome, MysteryEncounterType[]>([[Biome.PLAINS, [MysteryEncounterType.RATTATTACK]]]),
+      new Map<BiomeId, MysteryEncounterType[]>([[BiomeId.PLAINS, [MysteryEncounterType.RATTATTACK]]]),
     );
   });
 
@@ -95,9 +95,11 @@ describe("Rattattack - Mystery Encounter", () => {
       {
         pokemonConfigs: [
           {
-            species: getPokemonSpecies(Species.RATTATA),
+            species: getPokemonSpecies(SpeciesId.RATTATA),
             isBoss: true,
-            moveSet: [Moves.TACKLE, Moves.QUICK_ATTACK, Moves.BITE, Moves.FOCUS_ENERGY],
+            moveSet: [MoveId.TACKLE, MoveId.QUICK_ATTACK, MoveId.BITE, MoveId.FOCUS_ENERGY],
+            modifierConfigs: expect.anything(),
+            customPokemonData: expect.anything(),
           },
         ],
       },
@@ -134,7 +136,7 @@ describe("Rattattack - Mystery Encounter", () => {
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
-      expect(enemyField[0].species.speciesId).toBe(Species.RATTATA);
+      expect(enemyField[0].species.speciesId).toBe(SpeciesId.RATTATA);
     });
 
     it("should give attack type boosting item to lead pokemon", async () => {
