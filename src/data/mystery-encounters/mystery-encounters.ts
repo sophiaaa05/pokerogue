@@ -5,6 +5,7 @@ import { DepartmentStoreSaleEncounter } from "./encounters/department-store-sale
 import { FieldTripEncounter } from "./encounters/field-trip-encounter";
 import { FightOrFlightEncounter } from "./encounters/fight-or-flight-encounter";
 import { LostAtSeaEncounter } from "./encounters/lost-at-sea-encounter";
+import { RattattackEncounter } from "./encounters/rattattack-encounter";
 import { MysteriousChallengersEncounter } from "./encounters/mysterious-challengers-encounter";
 import { MysteriousChestEncounter } from "./encounters/mysterious-chest-encounter";
 import { ShadyVitaminDealerEncounter } from "./encounters/shady-vitamin-dealer-encounter";
@@ -267,6 +268,7 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.DARK_DEAL] = DarkDealEncounter;
   allMysteryEncounters[MysteryEncounterType.FIGHT_OR_FLIGHT] = FightOrFlightEncounter;
   allMysteryEncounters[MysteryEncounterType.TRAINING_SESSION] = TrainingSessionEncounter;
+  allMysteryEncounters[MysteryEncounterType.RATTATTACK] = RattattackEncounter;
   allMysteryEncounters[MysteryEncounterType.SLUMBERING_SNORLAX] = SlumberingSnorlaxEncounter;
   allMysteryEncounters[MysteryEncounterType.DEPARTMENT_STORE_SALE] = DepartmentStoreSaleEncounter;
   allMysteryEncounters[MysteryEncounterType.SHADY_VITAMIN_DEALER] = ShadyVitaminDealerEncounter;
