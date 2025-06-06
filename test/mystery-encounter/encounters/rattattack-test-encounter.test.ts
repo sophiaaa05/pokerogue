@@ -21,7 +21,6 @@ const namespace = "mysteryEncounters/rattattack";
 const defaultParty = [SpeciesId.RATTATA, SpeciesId.RATICATE];
 const defaultBiome = BiomeId.PLAINS;
 const waveUnder100 = 56;
-// const waveAbove100 = 153;
 
 describe("Rattattack - Mystery Encounter", () => {
   let phaserGame: Phaser.Game;
@@ -40,7 +39,15 @@ describe("Rattattack - Mystery Encounter", () => {
       .startingWave(waveUnder100)
       .startingBiome(defaultBiome)
       .disableTrainerWaves()
-      .moveset([MoveId.TACKLE, MoveId.QUICK_ATTACK, MoveId.BITE, MoveId.FOCUS_ENERGY]); // Required for attack type booster item generation
+      .moveset([
+        MoveId.TACKLE,
+        MoveId.QUICK_ATTACK,
+        MoveId.BITE,
+        MoveId.FOCUS_ENERGY,
+        MoveId.HYPER_FANG,
+        MoveId.CRUNCH,
+        MoveId.AERIAL_ACE,
+      ]);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<BiomeId, MysteryEncounterType[]>([[BiomeId.PLAINS, [MysteryEncounterType.RATTATTACK]]]),
@@ -127,9 +134,8 @@ describe("Rattattack - Mystery Encounter", () => {
         ],
       });
     });
-    it("should start battle against Joey", async () => {
-      const _phaseSpy = vi.spyOn(scene, "pushPhase");
 
+    it("should start battle against Joey", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.RATTATTACK, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
@@ -155,6 +161,7 @@ describe("Rattattack - Mystery Encounter", () => {
       expect(item).toBeDefined;
     });
   });
+
   describe("Option 2 - Remain Unprovoked", () => {
     it("should have the correct properties", () => {
       const option = RattattackEncounter.options[1];
@@ -170,6 +177,7 @@ describe("Rattattack - Mystery Encounter", () => {
         ],
       });
     });
+
     it("should leave encounter without battle", async () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 

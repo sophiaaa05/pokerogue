@@ -96,7 +96,7 @@ export const RattattackEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         ],
       });
       encounter.setDialogueToken("chosenPokemon", getPokemonSpecies(SpeciesId.RATTATA).getName());
-      loadCustomMovesForEncounter([MoveId.HYPER_FANG, MoveId.CRUNCH, MoveId.AERIAL_ACE, MoveId.FOCUS_ENERGY]);
+      loadCustomMovesForEncounter([MoveId.TACKLE, MoveId.QUICK_ATTACK, MoveId.BITE, MoveId.FOCUS_ENERGY]);
     } else {
       // above wave 100 - Raticate
       encounter.enemyPartyConfigs.push({
@@ -124,7 +124,7 @@ export const RattattackEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         ],
       });
       encounter.setDialogueToken("chosenPokemon", getPokemonSpecies(SpeciesId.RATICATE).getName());
-      loadCustomMovesForEncounter([MoveId.TACKLE, MoveId.QUICK_ATTACK, MoveId.BITE, MoveId.FOCUS_ENERGY]);
+      loadCustomMovesForEncounter([MoveId.HYPER_FANG, MoveId.CRUNCH, MoveId.AERIAL_ACE, MoveId.FOCUS_ENERGY]);
     }
     return true;
   })
